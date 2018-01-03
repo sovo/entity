@@ -1,0 +1,75 @@
+﻿<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Entity range</title>
+<style>
+#entity{
+	text-align:justify;
+	text-justify:distribute;
+}
+ruby{
+	font-size:xx-large;
+	line-height:2em;
+}
+</style>
+<script>
+window.addEventListener("load",changed,false);
+var began=0,ended=0;
+function changed(){
+	var entity=document.getElementById("entity"),
+		begin=Number(document.getElementById("begin").value),
+		end=Number(document.getElementById("end").value);
+	if(begin>end){
+		begin=Number(document.getElementById("end").value);
+		end=Number(document.getElementById("begin").value);
+	}
+	if(begin<1){return -1;}
+	if(end<began || begin>ended){
+		for(var i=end;i>=begin;--i){
+			entity.insertAdjacentHTML("afterBegin","<ruby id='"+i+"' title='0x"+i.toString(16)+"'>&#"+i+";<rt>&amp;#"+i+";</rt></ruby>");
+		}
+		for(var i=began;i<=ended;++i){
+			if(document.getElementById(i)){
+				entity.removeChild(document.getElementById(i));
+			}
+		}
+	}else{
+		if(begin<=began){
+			for(var i=began-1;i>=begin;--i){
+				entity.insertAdjacentHTML("afterBegin","<ruby id='"+i+"' title='0x"+i.toString(16)+"'>&#"+i+";<rt>&amp;#"+i+";</rt></ruby>");
+			}
+		}else{
+			for(var i=began;i<begin;++i){
+				if(document.getElementById(i)){
+					entity.removeChild(document.getElementById(i));
+				}
+			}
+		}
+		if(end>=ended){
+			for(var i=ended+1;i<=end;++i){
+				entity.insertAdjacentHTML("beforeEnd","<ruby id='"+i+"' title='0x"+i.toString(16)+"'>&#"+i+";<rt>&amp;#"+i+";</rt></ruby>");
+			}
+		}else{
+			for(var i=end+1;i<=ended;++i){
+				if(document.getElementById(i)){
+					entity.removeChild(document.getElementById(i));
+				}
+			}
+		}
+	}
+	began=begin;
+	ended=end;
+}
+</script>
+</head>
+
+<body>
+<form onSubmit="changed();return false">
+<input type="number" id="begin" value="33" min="1">
+<input type="number" id="end" value="122" min="1">
+<button>Go</button>
+</form>
+<div id="entity"></div>
+</body>
+</html>
